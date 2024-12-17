@@ -1,0 +1,13 @@
+FROM node:alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npx yarn install && npx yarn build && rm -rf ./src
+
+COPY . .
+
+EXPOSE 4000:4000
+
+CMD [ "npx", "yarn" , "start:prod" ]
