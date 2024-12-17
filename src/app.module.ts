@@ -10,13 +10,13 @@ import { TypeOrmModule } from '@nestjs/typeorm'
       envFilePath: process.cwd() + '/.env',
       isGlobal: true
     }),
-    TypeOrmModule.forRoot({
-      type: "mysql",
-      host: process.env.HOST,
-      port: Number(process.env.DB_PORT || 3306),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD
-    })
+    // TypeOrmModule.forRoot({
+    //   type: "mysql",
+    //   host: process.env.HOST,
+    //   port: Number(process.env.DB_PORT || 3306),
+    //   username: process.env.DB_USERNAME,
+    //   password: process.env.DB_PASSWORD
+    // })
   ],
   controllers: [AppController],
   providers: [AppService],
