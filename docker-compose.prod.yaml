@@ -3,13 +3,40 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+    depends_on:
+      - mysql_db
     ports:
-      - 3000:3000
+      - ${PORT}:${PORT}
     environment:
-      - PORT=${PORT}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
+      DB_HOST: 'mysql_db'
+      DB_USER: 'myuser'
+      DB_PASSWORD: 'password'
+      DB_DATABASE: 'test'
+      DB_PORT: 3306
+    networks:
+      - app
+
+  mysql_db:
+    image: "mysql/mysql-server:8.0"
+    ports:
+      - '3306:3306'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: test
+      MYSQL_USER: 'myuser'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
-      - ./src:/app/src
+      - db_data:/var/lib/mysql
+    networks:
+      - app
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  app:
+    driver: bridge

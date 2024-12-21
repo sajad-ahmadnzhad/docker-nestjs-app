@@ -1,13 +1,24 @@
-FROM node:alpine
+FROM node:alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npx yarn install && npx yarn build && rm -rf ./src
+RUN npx yarn install
 
 COPY . .
 
-EXPOSE 3000:3000
+RUN npx yarn build
 
-CMD [ "npx", "yarn" , "start:prod" ]
+FROM node:alpine
+
+WORKDIR /app
+
+COPY --from=builder ./app/package.json ./
+COPY --from=builder ./app/node_modules ./node_modules
+COPY --from=builder ./app/dist ./dist
+COPY --from=builder ./app/.env ./
+
+EXPOSE 4000
+
+CMD [ "node" , "./dist/main.js" ]
