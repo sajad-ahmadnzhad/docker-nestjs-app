@@ -1,8 +1,15 @@
 FROM node:alpine AS builder
 
+RUN addgroup -g 1001 nest
+RUN adduser -D -u 1001 -G nest docker
+
 WORKDIR /app
 
 COPY package*.json ./
+
+RUN  chown -R docker:nest /app
+
+USER docker
 
 RUN npx yarn install
 
@@ -18,6 +25,8 @@ COPY --from=builder ./app/package.json ./
 COPY --from=builder ./app/node_modules ./node_modules
 COPY --from=builder ./app/dist ./dist
 COPY --from=builder ./app/.env ./
+
+RUN npm prune --production
 
 EXPOSE 4000
 
